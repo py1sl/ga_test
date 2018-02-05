@@ -1,0 +1,9 @@
+template:template.in
+psize:10
+ncores:2
+que:scarf-rhel7
+mcnp_path:/home/isisg/scarf473/my_mcnp/MCNP_CODE/MCNP6/bin/mcnp6.mpi
+mutate_prob:0.01
+nlayers:10
+lstart:4
+njobs:5 
