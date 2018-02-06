@@ -69,6 +69,17 @@ def get_output_file_list():
     return glob.glob("*.ino")
 
 
+def convert_to_seq(fname):
+    """ """
+    arr = []
+    fname = fname.split(".")[0]
+    fname = fname.split("_")
+    for i in fname:
+        arr.append(int(i))
+
+    return arr
+
+
 def write_result_header(opath):
     """ """
     header = ["Shield optimising genetic algorithim",
@@ -118,6 +129,11 @@ def read_control_file():
 
 def gen_tidy(gen, pop):
     """ tidy up previous generation"""
+
+    os.makedirs("gen"+str(gen))
+    for f in pop:
+        os.rename(f , "gen"+str(gen)+"/" + f)
+        os.rename(f + "o" , "gen"+str(gen)+"/" + f + "o")
     # check and remove submit script
     try:
         os.remove("submit.sh")
