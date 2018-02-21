@@ -60,6 +60,7 @@ def mate(p1, p2, fitness):
 def generate_new_pop(psize, fitness, indata):
     """ """
     pop = []
+    mutate_arr = []
     mats = {0: " ", 1: -2.66, 2: -2.3, 3: -5.9, 4: -8.96, 5: -19.3,
             6: -11.35, 7: -0.93, 8: -7.15, 9: -7.82, 10: -0.998207}
     i = 0
@@ -71,9 +72,14 @@ def generate_new_pop(psize, fitness, indata):
         arr, mcount = mutate(arr, indata[6])
         fname = gacore.write_mcnp_file(arr, mcnp_tmp, indata[8],
                                        indata[7], mats)
-        pop.append(fname)
+        # check if already in this pop
+        if fname in pop:
+            i = i - 1
+        else:
+            pop.append(fname)
+            mutate_arr.append(mcount)
         i = i + 1
-    return pop
+    return pop, mutate_arr
 
 
 def mutate(arr, mutate_prob):
@@ -91,6 +97,22 @@ def mutate(arr, mutate_prob):
     return new_arr, mutate_count
 
 
+def cull(fit_dict, ave_fit, threshold):
+    """remove a fraction of population below threshold """
+    cvalue = ave_fit * threshold
+    c_count = 0
+
+    new_fit_dict = {}
+    for seq, val in fit_dict.items():
+        if val > cvalue:
+            fdict = {seq: val}
+            new_fit_dict.update(fdict)
+        else:
+            c_count = c_count + 1
+
+    return new_fit_dict, c_count
+
+
 if __name__ == "__main__":
 
     condata, old_pop = gacore.read_control_file()
@@ -98,8 +120,9 @@ if __name__ == "__main__":
     gen = int(condata[1]) + 1
     ofile_list = gacore.get_output_file_list()
     fitness, summary_data = calc_fitness(ofile_list)
-    new_pop = generate_new_pop(indata[1], fitness, indata)
+    fitness, c_count = cull(fitness, summary_data[0], indata[9])
     gacore.gen_tidy(condata[1], old_pop)
+    new_pop, mlist = generate_new_pop(indata[1], fitness, indata)
 
     gacore.write_run_scripts(new_pop, indata[5], indata[3], indata[2],
                              indata[4])

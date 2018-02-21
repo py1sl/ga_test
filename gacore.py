@@ -61,6 +61,12 @@ def read_input_file(ipath):
         if l[0] == "lstart":
             idata[8] = int(l[1])
 
+        if l[0] == "cull_thres":
+            idata[9] = float(l[1])
+
+        if l[0] == "inc_void":
+            idata[10] = int(l[1])
+
     return idata
 
 
@@ -132,8 +138,8 @@ def gen_tidy(gen, pop):
 
     os.makedirs("gen"+str(gen))
     for f in pop:
-        os.rename(f , "gen"+str(gen)+"/" + f)
-        os.rename(f + "o" , "gen"+str(gen)+"/" + f + "o")
+        os.rename(f, "gen"+str(gen)+"/" + f)
+        os.rename(f + "o", "gen"+str(gen)+"/" + f + "o")
     # check and remove submit script
     try:
         os.remove("submit.sh")
@@ -204,7 +210,7 @@ def write_run_scripts(pop, mpath, que, ncore, njobs):
 
 def write_submit_script(jlist):
     """ """
-    lines = ["#!/bin/bash", "dos2unix *"]
+    lines = ["#!/bin/bash", "dos2unix *", "cp control.txt con_bk.txt"]
 
     for j in jlist:
         lines.append("bsub < " + j)

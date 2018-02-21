@@ -68,7 +68,7 @@ def get_tally_res(lines, tnum):
             err = lines[9][29:35]
             c_count = c_count + 1
 
-    return ph, err
+    return float(ph), float(err)
 
 
 
